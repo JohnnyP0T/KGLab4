@@ -24,5 +24,30 @@ namespace KGLab4
         {
             InitializeComponent();
         }
+        private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            //var viewModel = (ViewModel.ViewModel)this.DataContext;
+            //if (viewModel.OnMouseDownCommand.CanExecute(e.GetPosition((IInputElement)sender)))
+            //{
+            //    viewModel.OnMouseDownCommand.Execute(e.GetPosition((IInputElement)sender));
+            //}
+        }
+
+        private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            //var viewModel = (ViewModel.ViewModel)this.DataContext;
+            //if (viewModel.OnMouseUpCommand.CanExecute(e.GetPosition((IInputElement)sender)))
+            //{
+            //    viewModel.OnMouseUpCommand.Execute(e.GetPosition((IInputElement)sender));
+            //}
+        }
+
+        private void Canvas_MouseMove(object sender, MouseEventArgs e)
+        {
+            tt.Placement = System.Windows.Controls.Primitives.PlacementMode.Relative;
+            tt.HorizontalOffset = e.GetPosition((IInputElement)sender).X + 10;
+            tt.VerticalOffset = e.GetPosition((IInputElement)sender).Y + 10;
+            tt.Content = "X-Coordinate: " + e.GetPosition((IInputElement)sender).X + "\n" + "Y-Coordinate: " + e.GetPosition((IInputElement)sender).Y;
+        }
     }
 }

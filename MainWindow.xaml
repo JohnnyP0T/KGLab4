@@ -4,12 +4,67 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:KGLab4"
+        xmlns:helpers="clr-namespace:KGLab4.Helpers"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Преобразования на плоскости" Height="450" Width="800">
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="0.5*" MinWidth="150" MaxWidth="300"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="Рисунок" Margin="10">
+            <Border
+                BorderThickness="2"
+                BorderBrush="Black"
+                Background="LightGray">
+                <UserControl x:Name="Control" Content="{Binding FigureView}" Background="White" 
+                             MouseDown="UIElement_OnMouseDown" MouseUp="UIElement_OnMouseUp" MouseMove="Canvas_MouseMove">
+                    <UserControl.ToolTip>
+                        <ToolTip x:Name="tt"></ToolTip>
+                    </UserControl.ToolTip>
+                </UserControl>
+            </Border>
+        </GroupBox>
 
+        <GridSplitter Grid.Column="1" Margin="0,5,0,5" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+
+        <GroupBox Margin="10" Grid.Column="2" Header="Меню">
+            <Grid>
+                <StackPanel Orientation="Vertical">
+                    <ToggleButton Margin="10" Content="Нарисовать оси"></ToggleButton>
+                    <Button Margin="10,0,10,10" Content="Нарисовать фигуру"></Button>
+                    <Button Margin="10,0,10,10" Content="Очистить"></Button>
+                    <Separator Margin="10"/>
+                    <Canvas>
+                        <Button Canvas.Left="110">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="ArrowUp" Width="13"></fa:ImageAwesome>
+                            </Button.Content>
+                        </Button>
+                        <Button Canvas.Left="110" Canvas.Top="20">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="ArrowDown" Width="13"></fa:ImageAwesome>
+                            </Button.Content>
+                        </Button>
+                        <Button Canvas.Left="90" Canvas.Top="10">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="ArrowLeft" Width="13"></fa:ImageAwesome>
+                            </Button.Content>
+                        </Button>
+                        <Button Canvas.Left="130" Canvas.Top="10">
+                            <Button.Content>
+                                <fa:ImageAwesome Icon="ArrowRight" Width="13"></fa:ImageAwesome>
+                            </Button.Content>
+                        </Button>
+                    </Canvas>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
     </Grid>
 </Window>
