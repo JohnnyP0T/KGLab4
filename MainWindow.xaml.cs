@@ -28,21 +28,24 @@ namespace KGLab4
         private void Window_OnKeyDown(object sender, KeyEventArgs e)
         {
             var viewModel = (ViewModel)this.DataContext;
-            viewModel.LeftButtonIsChecked = true;
-            if (e.Key == Key.Left && viewModel.LeftTransformCommand.CanExecute(e)) 
+            if (e.Key == Key.A && viewModel.LeftTransformCommand.CanExecute(e)) 
             {
+                viewModel.LeftButtonIsChecked = true;
                 viewModel.LeftTransformCommand.Execute(e);
             }
-            else if(e.Key == Key.Right && viewModel.RightTransformCommand.CanExecute(e))
+            else if(e.Key == Key.D && viewModel.RightTransformCommand.CanExecute(e))
             {
+                viewModel.RightButtonIsChecked = true;
                 viewModel.RightTransformCommand.Execute(e);
             }
-            else if (e.Key == Key.Up && viewModel.UpTransformCommand.CanExecute(e))
+            else if (e.Key == Key.W && viewModel.UpTransformCommand.CanExecute(e))
             {
+                viewModel.UpButtonIsChecked = true;
                 viewModel.UpTransformCommand.Execute(e);
             }
-            else if (e.Key == Key.Down && viewModel.DownTransformCommand.CanExecute(e))
+            else if (e.Key == Key.S && viewModel.DownTransformCommand.CanExecute(e))
             {
+                viewModel.DownButtonIsChecked = true;
                 viewModel.DownTransformCommand.Execute(e);
             }
         }
@@ -50,19 +53,19 @@ namespace KGLab4
         private void Window_OnKeyUp(object sender, KeyEventArgs e)
         {
             var viewModel = (ViewModel)this.DataContext;
-            if (e.Key == Key.Left)
+            if (e.Key == Key.A)
             {
                 viewModel.LeftButtonIsChecked = false;
             }
-            else if (e.Key == Key.Right)
+            else if (e.Key == Key.D)
             {
                 viewModel.RightButtonIsChecked = false;
             }
-            else if (e.Key == Key.Up)
+            else if (e.Key == Key.W)
             {
                 viewModel.UpButtonIsChecked = false;
             }
-            else if (e.Key == Key.Down)
+            else if (e.Key == Key.S)
             {
                 viewModel.DownButtonIsChecked = false;
             }
