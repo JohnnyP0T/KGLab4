@@ -24,6 +24,50 @@ namespace KGLab4
         {
             InitializeComponent();
         }
+
+        private void Window_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            var viewModel = (ViewModel)this.DataContext;
+            viewModel.LeftButtonIsChecked = true;
+            if (e.Key == Key.Left && viewModel.LeftTransformCommand.CanExecute(e)) 
+            {
+                viewModel.LeftTransformCommand.Execute(e);
+            }
+            else if(e.Key == Key.Right && viewModel.RightTransformCommand.CanExecute(e))
+            {
+                viewModel.RightTransformCommand.Execute(e);
+            }
+            else if (e.Key == Key.Up && viewModel.UpTransformCommand.CanExecute(e))
+            {
+                viewModel.UpTransformCommand.Execute(e);
+            }
+            else if (e.Key == Key.Down && viewModel.DownTransformCommand.CanExecute(e))
+            {
+                viewModel.DownTransformCommand.Execute(e);
+            }
+        }
+
+        private void Window_OnKeyUp(object sender, KeyEventArgs e)
+        {
+            var viewModel = (ViewModel)this.DataContext;
+            if (e.Key == Key.Left)
+            {
+                viewModel.LeftButtonIsChecked = false;
+            }
+            else if (e.Key == Key.Right)
+            {
+                viewModel.RightButtonIsChecked = false;
+            }
+            else if (e.Key == Key.Up)
+            {
+                viewModel.UpButtonIsChecked = false;
+            }
+            else if (e.Key == Key.Down)
+            {
+                viewModel.DownButtonIsChecked = false;
+            }
+        }
+
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
             //var viewModel = (ViewModel.ViewModel)this.DataContext;

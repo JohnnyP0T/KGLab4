@@ -8,22 +8,24 @@
         xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="Преобразования на плоскости" Height="450" Width="800">
+        ResizeMode="NoResize"
+        Title="Преобразования на плоскости" Height="577" Width="869" KeyDown="Window_OnKeyDown" KeyUp="Window_OnKeyUp">
     <Window.DataContext>
         <local:ViewModel/>
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="530*"/>
             <ColumnDefinition Width="Auto"/>
-            <ColumnDefinition Width="0.5*" MinWidth="150" MaxWidth="300"/>
+            <ColumnDefinition Width="91*" MinWidth="150" MaxWidth="300"/>
+            <ColumnDefinition Width="174*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Рисунок" Margin="10">
+        <GroupBox Header="Рисунок" Margin="10,10,10,10">
             <Border
                 BorderThickness="2"
                 BorderBrush="Black"
-                Background="LightGray">
-                <UserControl x:Name="Control" Content="{Binding FigureView}" Background="White" 
+                Background="LightGray" Width="500" Height="500">
+                <UserControl x:Name="Control" Content="{Binding CanvasView}" Background="White" Width="500" Height="500"
                              MouseDown="UIElement_OnMouseDown" MouseUp="UIElement_OnMouseUp" MouseMove="Canvas_MouseMove">
                     <UserControl.ToolTip>
                         <ToolTip x:Name="tt"></ToolTip>
@@ -32,36 +34,57 @@
             </Border>
         </GroupBox>
 
-        <GridSplitter Grid.Column="1" Margin="0,5,0,5" Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch"/>
+        <!--<GridSplitter Grid.Column="1" Margin="0,5,0,5" Width="5" HorizontalAlignment="Center"/>-->
 
-        <GroupBox Margin="10" Grid.Column="2" Header="Меню">
+        <GroupBox Margin="10,10,10,10" Grid.Column="2" Header="Меню" Grid.ColumnSpan="2">
             <Grid>
                 <StackPanel Orientation="Vertical">
-                    <ToggleButton Margin="10" Content="Нарисовать оси"></ToggleButton>
-                    <Button Margin="10,0,10,10" Content="Нарисовать фигуру"></Button>
-                    <Button Margin="10,0,10,10" Content="Очистить"></Button>
+                    <Button Margin="10" Content="Нарисовать оси" Command="{Binding DrawAxesCommand}"></Button>
+                    <Button Margin="10,0,10,10" Content="Нарисовать фигуру" Command="{Binding DrawFigureCommand}"></Button>
+                    <Button Margin="10,0,10,10" Content="Очистить" Command="{Binding ClearCommand}"></Button>
+                    <xctk:ColorPicker Margin="10" SelectedColor="{Binding ColorLine}"/>
+                    <StackPanel Orientation="Horizontal" Height="Auto" Margin="10">
+                        <TextBlock Text="Толщина "/>
+                        <TextBox>
+                            <TextBox.Text>
+                                <Binding Path="BoldValue" UpdateSourceTrigger="PropertyChanged">
+                                    <Binding.ValidationRules>
+                                        <helpers:StringToIntValidationRule ValidationStep="RawProposedValue"/>
+                                    </Binding.ValidationRules>
+                                </Binding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </StackPanel>
                     <Separator Margin="10"/>
                     <Canvas>
-                        <Button Canvas.Left="110">
-                            <Button.Content>
+                        <ToggleButton Canvas.Left="110" 
+                                      IsChecked="{Binding UpButtonIsChecked}" 
+                                      Command="{Binding UpTransformCommand}">
+                            <ToggleButton.Content>
                                 <fa:ImageAwesome Icon="ArrowUp" Width="13"></fa:ImageAwesome>
-                            </Button.Content>
-                        </Button>
-                        <Button Canvas.Left="110" Canvas.Top="20">
-                            <Button.Content>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        <ToggleButton Canvas.Left="110" Canvas.Top="20"
+                                      IsChecked="{Binding DownButtonIsChecked}"
+                                      Command="{Binding DownTransformCommand}">
+                            <ToggleButton.Content>
                                 <fa:ImageAwesome Icon="ArrowDown" Width="13"></fa:ImageAwesome>
-                            </Button.Content>
-                        </Button>
-                        <Button Canvas.Left="90" Canvas.Top="10">
-                            <Button.Content>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        <ToggleButton Canvas.Left="90" Canvas.Top="10" 
+                                      Command="{Binding LeftTransformCommand}"
+                                      IsChecked="{Binding LeftButtonIsChecked}">
+                            <ToggleButton.Content>
                                 <fa:ImageAwesome Icon="ArrowLeft" Width="13"></fa:ImageAwesome>
-                            </Button.Content>
-                        </Button>
-                        <Button Canvas.Left="130" Canvas.Top="10">
-                            <Button.Content>
+                            </ToggleButton.Content>
+                        </ToggleButton>
+                        <ToggleButton Canvas.Left="130" Canvas.Top="10"
+                                      IsChecked="{Binding RightButtonIsChecked}"
+                                      Command="{Binding RightTransformCommand}">
+                            <ToggleButton.Content>
                                 <fa:ImageAwesome Icon="ArrowRight" Width="13"></fa:ImageAwesome>
-                            </Button.Content>
-                        </Button>
+                            </ToggleButton.Content>
+                        </ToggleButton>
                     </Canvas>
                 </StackPanel>
             </Grid>
