@@ -30,21 +30,49 @@ namespace KGLab4
             var viewModel = (ViewModel)this.DataContext;
             if (e.Key == Key.A && viewModel.LeftTransformCommand.CanExecute(e)) 
             {
+                if (viewModel.LeftButtonIsChecked ||
+                    viewModel.RightButtonIsChecked ||
+                    viewModel.UpButtonIsChecked ||
+                    viewModel.DownButtonIsChecked)
+                {
+                    return;
+                }
                 viewModel.LeftButtonIsChecked = true;
                 viewModel.LeftTransformCommand.Execute(e);
             }
             else if(e.Key == Key.D && viewModel.RightTransformCommand.CanExecute(e))
             {
+                if (viewModel.LeftButtonIsChecked ||
+                    viewModel.RightButtonIsChecked ||
+                    viewModel.UpButtonIsChecked ||
+                    viewModel.DownButtonIsChecked)
+                {
+                    return;
+                }
                 viewModel.RightButtonIsChecked = true;
                 viewModel.RightTransformCommand.Execute(e);
             }
             else if (e.Key == Key.W && viewModel.UpTransformCommand.CanExecute(e))
             {
+                if (viewModel.LeftButtonIsChecked ||
+                    viewModel.RightButtonIsChecked ||
+                    viewModel.UpButtonIsChecked ||
+                    viewModel.DownButtonIsChecked)
+                {
+                    return;
+                }
                 viewModel.UpButtonIsChecked = true;
                 viewModel.UpTransformCommand.Execute(e);
             }
             else if (e.Key == Key.S && viewModel.DownTransformCommand.CanExecute(e))
             {
+                if (viewModel.LeftButtonIsChecked ||
+                    viewModel.RightButtonIsChecked ||
+                    viewModel.UpButtonIsChecked ||
+                    viewModel.DownButtonIsChecked)
+                {
+                    return;
+                }
                 viewModel.DownButtonIsChecked = true;
                 viewModel.DownTransformCommand.Execute(e);
             }

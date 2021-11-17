@@ -58,6 +58,17 @@ namespace KGLab4
             }
         }
 
+        private int _speed;
+
+        public int Speed
+        {
+            get => _speed;
+            set
+            {
+                _speed = value;
+            }
+        }
+
         #region Buttons
 
         private bool _leftButtonIsChecked;
@@ -151,9 +162,11 @@ namespace KGLab4
         {
             CanvasView = new Canvas();
             BoldValue = 3;
-            ColorLine = Colors.Red;
+            ColorLine = Colors.DeepSkyBlue;
             FigureLines = new List<Path>();
-
+            Speed = 1;
+            DrawAxes();
+            DrawFigureCommand.Execute(0);
         }
 
         #region Commands
@@ -178,8 +191,8 @@ namespace KGLab4
         {
             while (LeftButtonIsChecked)
             {
-                await Task.Run(() => Thread.Sleep(10));
-                AxesXTransform -= 1;
+                await Task.Run(() => Thread.Sleep(1));
+                AxesXTransform -= Speed;
                 foreach (var figureLine in FigureLines)
                 {
                     CanvasView.Children.Remove(figureLine);
@@ -192,8 +205,8 @@ namespace KGLab4
         {
             while (RightButtonIsChecked)
             {
-                await Task.Run(() => Thread.Sleep(10));
-                AxesXTransform += 1;
+                await Task.Run(() => Thread.Sleep(1));
+                AxesXTransform += Speed;
                 foreach (var figureLine in FigureLines)
                 {
                     CanvasView.Children.Remove(figureLine);
@@ -206,8 +219,8 @@ namespace KGLab4
         {
             while (UpButtonIsChecked)
             {
-                await Task.Run(() => Thread.Sleep(10));
-                AxesYTransform -= 1;
+                await Task.Run(() => Thread.Sleep(1));
+                AxesYTransform -= Speed;
                 foreach (var figureLine in FigureLines)
                 {
                     CanvasView.Children.Remove(figureLine);
@@ -220,8 +233,8 @@ namespace KGLab4
         {
             while (DownButtonIsChecked)
             {
-                await Task.Run(() => Thread.Sleep(10));
-                AxesYTransform += 1;
+                await Task.Run(() => Thread.Sleep(1));
+                AxesYTransform += Speed;
                 foreach (var figureLine in FigureLines)
                 {
                     CanvasView.Children.Remove(figureLine);
@@ -233,11 +246,13 @@ namespace KGLab4
 
         private int[,] InitSquare()
         {
-            var square = new int[4,3];
-            square[0, 0] = -50; square[0, 1] = 0; square[0, 2] = 1; // однородные координаты.
-            square[1, 0] = 0; square[1, 1] = 50; square[1, 2] = 1;
-            square[2, 0] = 50; square[2, 1] = 0; square[2, 2] = 1;
-            square[3, 0] = 0; square[3, 1] = -50; square[3, 2] = 1;
+            var square = new int[5,3];
+            square[0, 0] = -50; square[0, 1] = -10; square[0, 2] = 1; // однородные координаты.
+            square[1, 0] = -60; square[1, 1] = -40; square[1, 2] = 1;
+            square[2, 0] = 10; square[2, 1] = -10; square[2, 2] = 1;
+            square[3, 0] = 40; square[3, 1] = -60; square[3, 2] = 1;
+            square[4, 0] = 0; square[4, 1] = 50; square[4, 2] = 1;
+
             return square;
         }
         //инициализация матрицы сдвига
@@ -253,10 +268,10 @@ namespace KGLab4
         private int[,] InitAxes()
         {
             var axes = new int[4,3];
-            axes[0, 0] = -250; axes[0, 1] = 0; axes[0, 2] = 1;
-            axes[1, 0] = 250; axes[1, 1] = 0; axes[1, 2] = 1;
-            axes[2, 0] = 0; axes[2, 1] = 250; axes[2, 2] = 1;
-            axes[3, 0] = 0; axes[3, 1] = -250; axes[3, 2] = 1;
+            axes[0, 0] = -CanvasHeight / 2; axes[0, 1] = 0; axes[0, 2] = 1;
+            axes[1, 0] = CanvasHeight / 2; axes[1, 1] = 0; axes[1, 2] = 1;
+            axes[2, 0] = 0; axes[2, 1] = CanvasWidth / 2; axes[2, 2] = 1;
+            axes[3, 0] = 0; axes[3, 1] = -CanvasWidth / 2; axes[3, 2] = 1;
             return axes;
         }
 
@@ -283,12 +298,39 @@ namespace KGLab4
         private void DrawSquare()
         {
             var square = InitSquare();
+
+            #region Замкнутая область холста
+
+            if (AxesYTransform > 500)
+            {
+                AxesYTransform = 0;
+            }
+
+            if (AxesYTransform < 0)
+            {
+                AxesYTransform = 500;
+            }
+
+            if (AxesXTransform > 500)
+            {
+                AxesXTransform = 0;
+            }
+
+            if (AxesXTransform < 0)
+            {
+                AxesXTransform = 500;
+            }
+
+            #endregion
             var axes = InitMatrixTransform(AxesXTransform, AxesYTransform);
             var square1 = MultiplyMatrix(square, axes);
             DrawLine(new Point(square1[0, 0], square1[0, 1]), new Point(square1[1, 0], square1[1, 1]), true);
             DrawLine(new Point(square1[1, 0], square1[1, 1]), new Point(square1[2, 0], square1[2, 1]), true);
             DrawLine(new Point(square1[2, 0], square1[2, 1]), new Point(square1[3, 0], square1[3, 1]), true);
-            DrawLine(new Point(square1[3, 0], square1[3, 1]), new Point(square1[0, 0], square1[0, 1]), true);
+            DrawLine(new Point(square1[3, 0], square1[3, 1]), new Point(square1[4, 0], square1[4, 1]), true);
+            DrawLine(new Point(square1[4, 0], square1[4, 1]), new Point(square1[0, 0], square1[0, 1]), true);
+
+
         }
 
         private void DrawAxes()

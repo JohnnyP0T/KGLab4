@@ -54,7 +54,17 @@
                                 </Binding>
                             </TextBox.Text>
                         </TextBox>
+
+
                     </StackPanel>
+                    <TextBlock Margin="10, 0, 0,0" Text="Скорость"/>
+                    <Slider Margin="10, 0, 0,0"
+                            Value="{Binding Speed}"
+                            Minimum="1"
+                            Maximum="500"
+                            TickFrequency="1"
+                            TickPlacement="BottomRight" />
+
                     <Separator Margin="10"/>
                     <Canvas>
                         <ToggleButton Canvas.Left="110" 
