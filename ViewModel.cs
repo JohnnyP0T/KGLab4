@@ -69,6 +69,46 @@ namespace KGLab4
             }
         }
 
+        private int _scale;
+
+        public int Scale
+        {
+            get => _scale;
+            set
+            {
+                _scale = value;
+                OnPropertyChanged(nameof(Scale));
+                if (FigureLines.Count != 0)
+                {
+                    foreach (var figureLine in FigureLines)
+                    {
+                        CanvasView.Children.Remove(figureLine);
+                    }
+                    DrawSquare();
+                }
+            }
+        }
+
+        private int _rotate;
+
+        public int Rotate
+        {
+            get => _rotate;
+            set
+            {
+                _rotate = value;
+                OnPropertyChanged(nameof(Rotate));
+                if (FigureLines.Count != 0)
+                {
+                    foreach (var figureLine in FigureLines)
+                    {
+                        CanvasView.Children.Remove(figureLine);
+                    }
+                    DrawSquare();
+                }
+            }
+        }
+
         #region Buttons
 
         private bool _leftButtonIsChecked;
@@ -157,6 +197,26 @@ namespace KGLab4
             }
         }
 
+        private Point _pointDown;
+
+        public Point PointDown
+        {
+            get => _pointDown;
+            set
+            {
+                _pointDown = value;
+                OnPropertyChanged(nameof(PointDown));
+                var matrix = new int[3, 3];
+                var cos = 1;
+                var sin = 0;
+                var m = (int)value.X;
+                var n = (int)value.Y;
+                matrix[0, 0] = cos; matrix[0, 1] = sin; matrix[0, 2] = 0;
+                matrix[1, 0] = -sin; matrix[1, 1] = cos; matrix[1, 2] = 0;
+                matrix[2, 0] = -m*(cos-1) + n*sin; matrix[2, 1] = -m*sin-n*(cos-1); matrix[2, 2] = 1;
+                DrawSquare(matrix);
+            }
+        }
 
         public ViewModel()
         {
@@ -165,6 +225,8 @@ namespace KGLab4
             ColorLine = Colors.DeepSkyBlue;
             FigureLines = new List<Path>();
             Speed = 1;
+            Scale = 1;
+            Rotate = 0;
             DrawAxes();
             DrawFigureCommand.Execute(0);
         }
@@ -246,7 +308,7 @@ namespace KGLab4
 
         private int[,] InitSquare()
         {
-            var square = new int[5,3];
+            var square = new int[5, 3];
             square[0, 0] = -50; square[0, 1] = -10; square[0, 2] = 1; // однородные координаты.
             square[1, 0] = -60; square[1, 1] = -40; square[1, 2] = 1;
             square[2, 0] = 10; square[2, 1] = -10; square[2, 2] = 1;
@@ -258,16 +320,16 @@ namespace KGLab4
         //инициализация матрицы сдвига
         private int[,] InitMatrixTransform(int k1, int l1)
         {
-            var matrixShift = new int[3,3];
-            matrixShift[0, 0] = 1; matrixShift[0, 1] = 0; matrixShift[0, 2] = 0;
-            matrixShift[1, 0] = 0; matrixShift[1, 1] = 1; matrixShift[1, 2] = 0;
-            matrixShift[2, 0] = k1; matrixShift[2, 1] = l1; matrixShift[2, 2] = 1;
+            var matrixShift = new int[3, 3];
+            matrixShift[0, 0] = Scale; matrixShift[0, 1] = Rotate; matrixShift[0, 2] = 0;
+            matrixShift[1, 0] = -Rotate; matrixShift[1, 1] = Scale; matrixShift[1, 2] = 0;
+            matrixShift[2, 0] = k1; matrixShift[2, 1] = l1; matrixShift[2, 2] = Scale;
             return matrixShift;
         }
 
         private int[,] InitAxes()
         {
-            var axes = new int[4,3];
+            var axes = new int[4, 3];
             axes[0, 0] = -CanvasHeight / 2; axes[0, 1] = 0; axes[0, 2] = 1;
             axes[1, 0] = CanvasHeight / 2; axes[1, 1] = 0; axes[1, 2] = 1;
             axes[2, 0] = 0; axes[2, 1] = CanvasWidth / 2; axes[2, 2] = 1;
@@ -295,10 +357,9 @@ namespace KGLab4
             return r;
         }
 
-        private void DrawSquare()
+        private void DrawSquare(int[,]? matrix = null)
         {
             var square = InitSquare();
-
             #region Замкнутая область холста
 
             if (AxesYTransform > 500)
@@ -323,14 +384,16 @@ namespace KGLab4
 
             #endregion
             var axes = InitMatrixTransform(AxesXTransform, AxesYTransform);
+            if (matrix != null)
+            {
+                axes = matrix;
+            }
             var square1 = MultiplyMatrix(square, axes);
             DrawLine(new Point(square1[0, 0], square1[0, 1]), new Point(square1[1, 0], square1[1, 1]), true);
             DrawLine(new Point(square1[1, 0], square1[1, 1]), new Point(square1[2, 0], square1[2, 1]), true);
             DrawLine(new Point(square1[2, 0], square1[2, 1]), new Point(square1[3, 0], square1[3, 1]), true);
             DrawLine(new Point(square1[3, 0], square1[3, 1]), new Point(square1[4, 0], square1[4, 1]), true);
             DrawLine(new Point(square1[4, 0], square1[4, 1]), new Point(square1[0, 0], square1[0, 1]), true);
-
-
         }
 
         private void DrawAxes()
@@ -342,7 +405,7 @@ namespace KGLab4
             var tempColor = ColorLine;
             ColorLine = Colors.Blue;
             BoldValue = 1;
-            DrawLine(new Point(axis1[0,0], axis1[0, 1]), new Point(axis1[1,0], axis1[1,1]));
+            DrawLine(new Point(axis1[0, 0], axis1[0, 1]), new Point(axis1[1, 0], axis1[1, 1]));
             DrawLine(new Point(axis1[2, 0], axis1[2, 1]), new Point(axis1[3, 0], axis1[3, 1]));
             BoldValue = tempBold;
             ColorLine = tempColor;

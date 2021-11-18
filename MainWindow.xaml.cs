@@ -101,11 +101,8 @@ namespace KGLab4
 
         private void UIElement_OnMouseDown(object sender, MouseButtonEventArgs e)
         {
-            //var viewModel = (ViewModel.ViewModel)this.DataContext;
-            //if (viewModel.OnMouseDownCommand.CanExecute(e.GetPosition((IInputElement)sender)))
-            //{
-            //    viewModel.OnMouseDownCommand.Execute(e.GetPosition((IInputElement)sender));
-            //}
+            var viewModel = (ViewModel)this.DataContext;
+            viewModel.PointDown = e.GetPosition((IInputElement)sender);
         }
 
         private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
