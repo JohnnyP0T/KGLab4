@@ -91,9 +91,9 @@ namespace KGLab4
             }
         }
 
-        private int _scale;
+        private double _scale;
 
-        public int Scale
+        public double Scale
         {
             get => _scale;
             set
