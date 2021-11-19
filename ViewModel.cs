@@ -42,7 +42,18 @@ namespace KGLab4
             get => _axesXTransform;
             set
             {
-                _axesXTransform = value;
+                if (value > 500)
+                {
+                    _axesXTransform = 0;
+                }
+                else if (value < 0)
+                {
+                    _axesXTransform = 500;
+                }
+                else
+                {
+                    _axesXTransform = value;
+                }
                 OnPropertyChanged(nameof(AxesXTransform));
             }
         }
@@ -53,7 +64,18 @@ namespace KGLab4
             get => _axesYTransform;
             set
             {
-                _axesYTransform = value;
+                if (value > 500)
+                {
+                    _axesYTransform = 0;
+                }
+                else if (value < 0)
+                {
+                    _axesYTransform = 500;
+                }
+                else
+                {
+                    _axesYTransform = value;
+                }
                 OnPropertyChanged(nameof(AxesYTransform));
             }
         }
@@ -341,6 +363,19 @@ namespace KGLab4
 
             return square;
         }
+
+        private double[,] InitFigureCircle()
+        {
+            var square = new double[5, 3];
+            square[0, 0] = -10; square[0, 1] = 0; square[0, 2] = 1; // однородные координаты.
+            square[1, 0] = +10; square[1, 1] = 0; square[1, 2] = 1;
+            square[2, 0] = 0; square[2, 1] = -10; square[2, 2] = 1;
+            square[3, 0] = 0; square[3, 1] = +10; square[3, 2] = 1;
+            square[4, 0] = 10; square[4, 1] = 10; square[4, 2] = 1;
+
+            return square;
+        }
+
         //инициализация матрицы сдвига
         private double[,] InitMatrixTransform(int k1, int l1)
         {
@@ -384,29 +419,6 @@ namespace KGLab4
         private void DrawSquare(double[,]? matrix = null)
         {
             var square = InitSquare();
-            #region Замкнутая область холста
-
-            if (AxesYTransform > 500)
-            {
-                AxesYTransform = 0;
-            }
-
-            if (AxesYTransform < 0)
-            {
-                AxesYTransform = 500;
-            }
-
-            if (AxesXTransform > 500)
-            {
-                AxesXTransform = 0;
-            }
-
-            if (AxesXTransform < 0)
-            {
-                AxesXTransform = 500;
-            }
-
-            #endregion
             var axes = InitMatrixTransform(AxesXTransform, AxesYTransform);
             if (matrix != null)
             {
@@ -418,6 +430,12 @@ namespace KGLab4
             DrawLine(new Point(square1[2, 0], square1[2, 1]), new Point(square1[3, 0], square1[3, 1]), true);
             DrawLine(new Point(square1[3, 0], square1[3, 1]), new Point(square1[4, 0], square1[4, 1]), true);
             DrawLine(new Point(square1[4, 0], square1[4, 1]), new Point(square1[0, 0], square1[0, 1]), true);
+        }
+
+        private void DrawFigureCircle(double[,]? matrix = null)
+        {
+            var circle = InitFigureCircle();
+            var axes = InitMatrixTransform(AxesXTransform, AxesYTransform);
         }
 
         private void DrawAxes()
