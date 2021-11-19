@@ -89,9 +89,9 @@ namespace KGLab4
             }
         }
 
-        private int _rotate;
+        private double _rotate;
 
-        public int Rotate
+        public double Rotate
         {
             get => _rotate;
             set
@@ -206,16 +206,36 @@ namespace KGLab4
             {
                 _pointDown = value;
                 OnPropertyChanged(nameof(PointDown));
-                var matrix = new int[3, 3];
-                var cos = 1;
-                var sin = 0;
-                var m = (int)value.X;
-                var n = (int)value.Y;
+                RotationFigure((int)value.X, (int)value.Y);
+            }
+        }
+
+        private async void RotationFigure(int m, int n)
+        {
+            var degrees = 0;
+            while (!LeftButtonIsChecked)
+            {
+                await Task.Run(() => Thread.Sleep(1));
+                degrees += Speed;
+                if (FigureLines.Count != 0)
+                {
+                    foreach (var figureLine in FigureLines)
+                    {
+                        CanvasView.Children.Remove(figureLine);
+                    }
+                    FigureLines.Clear();
+                }
+                var matrix = new double[3, 3];
+                var cos = Math.Cos(Math.PI * degrees / 180.0);
+                var sin = Math.Sin(Math.PI * degrees / 180.0);
                 matrix[0, 0] = cos; matrix[0, 1] = sin; matrix[0, 2] = 0;
                 matrix[1, 0] = -sin; matrix[1, 1] = cos; matrix[1, 2] = 0;
-                matrix[2, 0] = -m*(cos-1) + n*sin; matrix[2, 1] = -m*sin-n*(cos-1); matrix[2, 2] = 1;
+                matrix[2, 0] = -m*(cos - 1) + n*sin; matrix[2, 1] = -n*(cos - 1) - m*sin; matrix[2, 2] = 1;
                 DrawSquare(matrix);
             }
+
+            AxesXTransform = m;
+            AxesYTransform = n;
         }
 
         public ViewModel()
@@ -259,6 +279,7 @@ namespace KGLab4
                 {
                     CanvasView.Children.Remove(figureLine);
                 }
+                FigureLines.Clear();
                 DrawSquare();
             }
         }, obj => FigureLines.Count != 0);
@@ -273,6 +294,7 @@ namespace KGLab4
                 {
                     CanvasView.Children.Remove(figureLine);
                 }
+                FigureLines.Clear();
                 DrawSquare();
             }
         }, obj => FigureLines.Count != 0);
@@ -287,6 +309,7 @@ namespace KGLab4
                 {
                     CanvasView.Children.Remove(figureLine);
                 }
+                FigureLines.Clear();
                 DrawSquare();
             }
         }, obj => FigureLines.Count != 0);
@@ -301,14 +324,15 @@ namespace KGLab4
                 {
                     CanvasView.Children.Remove(figureLine);
                 }
+                FigureLines.Clear();
                 DrawSquare();
             }
         }, obj => FigureLines.Count != 0);
         #endregion
 
-        private int[,] InitSquare()
+        private double[,] InitSquare()
         {
-            var square = new int[5, 3];
+            var square = new double[5, 3];
             square[0, 0] = -50; square[0, 1] = -10; square[0, 2] = 1; // однородные координаты.
             square[1, 0] = -60; square[1, 1] = -40; square[1, 2] = 1;
             square[2, 0] = 10; square[2, 1] = -10; square[2, 2] = 1;
@@ -318,18 +342,18 @@ namespace KGLab4
             return square;
         }
         //инициализация матрицы сдвига
-        private int[,] InitMatrixTransform(int k1, int l1)
+        private double[,] InitMatrixTransform(int k1, int l1)
         {
-            var matrixShift = new int[3, 3];
+            var matrixShift = new double[3, 3];
             matrixShift[0, 0] = Scale; matrixShift[0, 1] = Rotate; matrixShift[0, 2] = 0;
             matrixShift[1, 0] = -Rotate; matrixShift[1, 1] = Scale; matrixShift[1, 2] = 0;
             matrixShift[2, 0] = k1; matrixShift[2, 1] = l1; matrixShift[2, 2] = Scale;
             return matrixShift;
         }
 
-        private int[,] InitAxes()
+        private double[,] InitAxes()
         {
-            var axes = new int[4, 3];
+            var axes = new double[4, 3];
             axes[0, 0] = -CanvasHeight / 2; axes[0, 1] = 0; axes[0, 2] = 1;
             axes[1, 0] = CanvasHeight / 2; axes[1, 1] = 0; axes[1, 2] = 1;
             axes[2, 0] = 0; axes[2, 1] = CanvasWidth / 2; axes[2, 2] = 1;
@@ -337,12 +361,12 @@ namespace KGLab4
             return axes;
         }
 
-        private int[,] MultiplyMatrix(int[,] a, int[,] b)
+        private double[,] MultiplyMatrix(double[,] a, double[,] b)
         {
             var n = a.GetLength(0);
             var m = a.GetLength(1);
 
-            var r = new int[n, m];
+            var r = new double[n, m];
             for (var i = 0; i < n; i++)
             {
                 for (var j = 0; j < m; j++)
@@ -357,7 +381,7 @@ namespace KGLab4
             return r;
         }
 
-        private void DrawSquare(int[,]? matrix = null)
+        private void DrawSquare(double[,]? matrix = null)
         {
             var square = InitSquare();
             #region Замкнутая область холста
