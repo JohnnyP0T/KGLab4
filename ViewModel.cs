@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using KGLab4.Helpers;
+using KGLab4.Model;
 //using Color = System.Drawing.Color;
 using Point = System.Windows.Point;
 using Color = System.Windows.Media.Color;
@@ -269,8 +270,33 @@ namespace KGLab4
             Speed = 1;
             Scale = 1;
             Rotate = 0;
-            DrawAxes();
-            DrawFigureCommand.Execute(0);
+            //DrawAxes();
+            //DrawFigureCommand.Execute(0);
+            var bike = new Bike(ColorLine, 3, 1, new Point(250,250));
+            //bike.DrawBike();
+            //foreach (var path in bike.FigureLines)
+            //{
+            //    CanvasView.Children.Add(path);
+            //}
+
+            DrawBike(bike);
+        }
+
+        private async void DrawBike(Bike bike)
+        {
+            int s = Speed;
+            for (int i = 0; i < 100; i++)
+            {
+                await Task.Run(() => Thread.Sleep(1));
+
+                bike.Animate(s);
+                s += Speed;
+
+                foreach (var path in bike.FigureLines)
+                {
+                    CanvasView.Children.Add(path);
+                }
+            }
         }
 
         #region Commands
@@ -364,18 +390,6 @@ namespace KGLab4
             return square;
         }
 
-        private double[,] InitFigureCircle()
-        {
-            var square = new double[5, 3];
-            square[0, 0] = -10; square[0, 1] = 0; square[0, 2] = 1; // однородные координаты.
-            square[1, 0] = +10; square[1, 1] = 0; square[1, 2] = 1;
-            square[2, 0] = 0; square[2, 1] = -10; square[2, 2] = 1;
-            square[3, 0] = 0; square[3, 1] = +10; square[3, 2] = 1;
-            square[4, 0] = 10; square[4, 1] = 10; square[4, 2] = 1;
-
-            return square;
-        }
-
         //инициализация матрицы сдвига
         private double[,] InitMatrixTransform(int k1, int l1)
         {
@@ -430,12 +444,6 @@ namespace KGLab4
             DrawLine(new Point(square1[2, 0], square1[2, 1]), new Point(square1[3, 0], square1[3, 1]), true);
             DrawLine(new Point(square1[3, 0], square1[3, 1]), new Point(square1[4, 0], square1[4, 1]), true);
             DrawLine(new Point(square1[4, 0], square1[4, 1]), new Point(square1[0, 0], square1[0, 1]), true);
-        }
-
-        private void DrawFigureCircle(double[,]? matrix = null)
-        {
-            var circle = InitFigureCircle();
-            var axes = InitMatrixTransform(AxesXTransform, AxesYTransform);
         }
 
         private void DrawAxes()
