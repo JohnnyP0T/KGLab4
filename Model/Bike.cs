@@ -84,6 +84,10 @@ namespace KGLab4.Model
             {
                 DrawLine(new Point(Pedals[0, 0], Pedals[0, 1]), new Point(Pedals[1, 0], Pedals[1, 1]));
                 DrawLine(new Point(Pedals[2, 0], Pedals[2, 1]), new Point(Pedals[3, 0], Pedals[3, 1]));
+
+                DrawLine(new Point(Carcass[0, 0], Carcass[0, 1]), new Point(Carcass[1, 0], Carcass[1, 1]));
+                DrawLine(new Point(Carcass[1, 0], Carcass[1, 1]), new Point(Carcass[2, 0], Carcass[2, 1]));
+
             }
         }
 
@@ -92,6 +96,7 @@ namespace KGLab4.Model
             var cos = Math.Cos(Math.PI * speed / 180.0);
             var sin = Math.Sin(Math.PI * speed / 180.0);
             var matrixTransform = new double[3, 3];
+            InitPedals();
             matrixTransform[0, 0] = cos; matrixTransform[0, 1] = sin; matrixTransform[0, 2] = 0;
             matrixTransform[1, 0] = -sin; matrixTransform[1, 1] = cos; matrixTransform[1, 2] = 0;
             matrixTransform[2, 0] = PointCenter.X; matrixTransform[2, 1] = PointCenter.Y; matrixTransform[2, 2] = 1;
@@ -100,6 +105,10 @@ namespace KGLab4.Model
         }
 
         private double[,] Pedals;
+        private double[,] Carcass;
+        private double[,] MatrixShift;
+
+
         public Bike(Color colorLine, int boldValue, int countCircle, Point pointCenter)
         {
             _colorLine = colorLine;
@@ -107,21 +116,36 @@ namespace KGLab4.Model
             _countCircle = countCircle;
             _pointCenter = pointCenter;
             FigureLines = new List<Path>();
+            InitPedals();
+            InitCarcass();
+            Carcass = MultiplyMatrix(Carcass, InitMatrixShift());
+        }
+
+        private void InitPedals()
+        {
             Pedals = new double[4, 3];
             Pedals[0, 0] = -10; Pedals[0, 1] = -10; Pedals[0, 2] = 1; // однородные координаты.
             Pedals[1, 0] = 10; Pedals[1, 1] = 10; Pedals[1, 2] = 1;
             Pedals[2, 0] = -10; Pedals[2, 1] = 10; Pedals[2, 2] = 1;
             Pedals[3, 0] = 10; Pedals[3, 1] = -10; Pedals[3, 2] = 1;
-
-
-            var matrixTransform = new double[3, 3];
-            matrixTransform[0, 0] = 1; matrixTransform[0, 1] = 0; matrixTransform[0, 2] = 0;
-            matrixTransform[1, 0] = 0; matrixTransform[1, 1] = 1; matrixTransform[1, 2] = 0;
-            matrixTransform[2, 0] = PointCenter.X; matrixTransform[2, 1] = PointCenter.Y; matrixTransform[2, 2] = 1;
-            Pedals = MultiplyMatrix(Pedals, matrixTransform);
         }
 
+        public void InitCarcass()
+        {
+            Carcass = new double[5, 3];
+            Carcass[0, 0] = 0; Carcass[0, 1] = 0; Carcass[0, 2] = 1; // однородные координаты.
+            Carcass[1, 0] = -20; Carcass[1, 1] = -20; Carcass[1, 2] = 1;
+            Carcass[2, 0] = -50; Carcass[2, 1] = 10; Carcass[2, 2] = 1;
+        }
 
+        private double[,] InitMatrixShift()
+        {
+            var matrixShift = new double[3, 3];
+            matrixShift[0, 0] = 1; matrixShift[0, 1] = 0; matrixShift[0, 2] = 0;
+            matrixShift[1, 0] = 0; matrixShift[1, 1] = 1; matrixShift[1, 2] = 0;
+            matrixShift[2, 0] = PointCenter.X; matrixShift[2, 1] = PointCenter.Y; matrixShift[2, 2] = 1;
+            return matrixShift;
+        }
 
         private void DrawLine(Point startPoint, Point endPoint)
         {

@@ -229,17 +229,21 @@ namespace KGLab4
             {
                 _pointDown = value;
                 OnPropertyChanged(nameof(PointDown));
-                RotationFigure((int)value.X, (int)value.Y);
+                RotationFigure(value.X, value.Y);
             }
         }
 
-        private async void RotationFigure(int m, int n)
+        private async void RotationFigure(double m, double n)
         {
-            var degrees = 0;
+            var degrees = 0.0;
             while (!LeftButtonIsChecked)
             {
                 await Task.Run(() => Thread.Sleep(1));
                 degrees += Speed;
+                if (degrees >= 360)
+                {
+                    degrees = 0;
+                }
                 if (FigureLines.Count != 0)
                 {
                     foreach (var figureLine in FigureLines)
@@ -253,12 +257,12 @@ namespace KGLab4
                 var sin = Math.Sin(Math.PI * degrees / 180.0);
                 matrix[0, 0] = cos; matrix[0, 1] = sin; matrix[0, 2] = 0;
                 matrix[1, 0] = -sin; matrix[1, 1] = cos; matrix[1, 2] = 0;
-                matrix[2, 0] = -m*(cos - 1) + n*sin; matrix[2, 1] = -n*(cos - 1) - m*sin; matrix[2, 2] = 1;
+                matrix[2, 0] = -m*(cos - 1) + n*sin; matrix[2, 1] = -m*sin - n*(cos - 1); matrix[2, 2] = 1;
                 DrawSquare(matrix);
             }
 
-            AxesXTransform = m;
-            AxesYTransform = n;
+            AxesXTransform = (int)m;
+            AxesYTransform = (int)n;
         }
 
         public ViewModel()
@@ -270,16 +274,10 @@ namespace KGLab4
             Speed = 1;
             Scale = 1;
             Rotate = 0;
-            //DrawAxes();
-            //DrawFigureCommand.Execute(0);
-            var bike = new Bike(ColorLine, 3, 1, new Point(250,250));
-            //bike.DrawBike();
-            //foreach (var path in bike.FigureLines)
-            //{
-            //    CanvasView.Children.Add(path);
-            //}
-
-            DrawBike(bike);
+            DrawAxes();
+            DrawFigureCommand.Execute(0);
+            //var bike = new Bike(ColorLine, 3, 1, new Point(250, 250));
+            //DrawBike(bike);
         }
 
         private async void DrawBike(Bike bike)
@@ -291,7 +289,7 @@ namespace KGLab4
 
                 bike.Animate(s);
                 s += Speed;
-
+                CanvasView.Children.Clear();
                 foreach (var path in bike.FigureLines)
                 {
                     CanvasView.Children.Add(path);
